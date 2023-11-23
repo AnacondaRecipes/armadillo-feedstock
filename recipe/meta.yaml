@@ -32,12 +32,18 @@ requirements:
     - mkl-devel {{ mkl }}  # [blas_impl == 'mkl']
     - arpack  # [unix]
     - superlu >=5.2.0,<6  # [unix]
+    - intel-openmp  # [win]
+    - llvm-openmp  # [osx]
+    - libgomp      # [linux]
   run:
     - arpack  # [unix]
     - superlu >=5.2.0,<6  # [unix]
     # OpenBLAS or MKL
     - mkl {{ mkl }}.*                 # [blas_impl == "mkl"]
     - libopenblas                     # [blas_impl == "openblas"]
+    - intel-openmp  # [win]
+    - llvm-openmp  # [osx]
+    - libgomp      # [linux]
 
 test:
   commands:
