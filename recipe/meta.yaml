@@ -20,7 +20,7 @@ build:
 
 requirements:
   build:
-    - cmake >=3.1
+    - cmake 3.26.4
     - make  # [unix]
     - {{ compiler('cxx') }}
     - pkg-config  # [unix]
@@ -30,7 +30,7 @@ requirements:
     - openblas-devel {{ openblas }}  # [blas_impl == 'openblas']
     - mkl-devel {{ mkl }}  # [blas_impl == 'mkl']
     - arpack  # [unix]
-    - superlu >=5.2.0,<6  # [unix]
+    - superlu 5.3.0  # [unix]
     - intel-openmp  # [win]
     - llvm-openmp  # [osx]
     - libgomp      # [linux]
