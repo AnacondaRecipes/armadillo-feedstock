@@ -5,7 +5,6 @@ package:
   version: {{ version }}
 
 source:
-  fn: armadillo-{{ version }}.tar.xz
   url: https://sourceforge.net/projects/arma/files/armadillo-{{ version }}.tar.xz
   sha256: 3858b0fd431772af032ad3f35c2aeb54e8dabea59169e7d1e9fccd78bc82ad35
 
