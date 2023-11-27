@@ -1,2 +1,5 @@
+channels:
+  - https://staging.continuum.io/prefect/fs/superlu-feedstock/pr2/1800327
+
 upload_channels:
   - sfe1ed40
