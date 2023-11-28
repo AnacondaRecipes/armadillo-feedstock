@@ -5,32 +5,44 @@ package:
   version: {{ version }}
 
 source:
-  fn: armadillo-{{ version }}.tar.xz
-  url: http://sourceforge.net/projects/arma/files/armadillo-{{ version }}.tar.xz
+  url: https://sourceforge.net/projects/arma/files/armadillo-{{ version }}.tar.xz
   sha256: 3858b0fd431772af032ad3f35c2aeb54e8dabea59169e7d1e9fccd78bc82ad35
 
 build:
   number: 0
   skip: true  # [win and vc<14]
+  # Armadillo doesn't support MKL on macOS
+  skip: true  # [osx and (blas_impl != 'openblas')]
   run_exports:
     - {{ pin_subpackage('armadillo', min_pin='x.x', max_pin='x') }}
+  missing_dso_whitelist:
+    - '$RPATH/ld64.so.1'  # [s390x]
 
 requirements:
   build:
-    - cmake >=3.1
+    - cmake 3.26.4
     - make  # [unix]
     - {{ compiler('cxx') }}
     - pkg-config  # [unix]
     - ninja  # [win]
   host:
-    # optional items below here
-    - libblas
-    - liblapack
+    # Our openblas package provides liblapack. ALso, libpapack is a symlink to openblas.
+    - openblas-devel {{ openblas }}  # [blas_impl == 'openblas']
+    - mkl-devel {{ mkl }}  # [blas_impl == 'mkl']
     - arpack  # [unix]
-    - superlu >=5.2.0,<6  # [unix]
+    - superlu 5.3.0  # [unix]
+    - intel-openmp  # [win]
+    - llvm-openmp  # [osx]
+    - libgomp      # [linux]
   run:
     - arpack  # [unix]
     - superlu >=5.2.0,<6  # [unix]
+    # OpenBLAS or MKL
+    - mkl {{ mkl }}.*                 # [blas_impl == "mkl"]
+    - libopenblas                     # [blas_impl == "openblas"]
+    - intel-openmp  # [win]
+    - llvm-openmp  # [osx]
+    - libgomp      # [linux]
 
 test:
   commands:
@@ -42,10 +54,16 @@ test:
     - if not exist %LIBRARY_LIB%\armadillo.lib exit 1  # [win]
 
 about:
-  home: http://arma.sourceforge.net
+  home: https://arma.sourceforge.net/
   license: Apache-2.0
+  license_family: Apache
   license_file: LICENSE.txt
   summary: Armadillo C++ linear algebra library
+  description: |
+    Armadillo is a high quality C++ library for linear algebra and scientific computing,
+    aiming towards a good balance between speed and ease of use.
+  dev_url: https://gitlab.com/conradsnicta/armadillo-code
+  doc_url: https://arma.sourceforge.net/docs.html
 
 extra:
   recipe-maintainers:
@@ -53,3 +71,5 @@ extra:
     - dirmeier
     - marcelotrevisani
     - henryiii
+  skip-lints:
+    - cbc_dep_in_run_missing_from_host
